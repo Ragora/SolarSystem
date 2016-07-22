@@ -17,6 +17,18 @@ namespace SolarSystem
     public abstract class ANode
     {
         /// <summary>
+        /// The bounding sphere representing collision for this node.
+        /// </summary>
+        public virtual BoundingSphere Sphere { set; get; }
+
+        /// <summary>
+        /// Whether or not the node should be drawn with a fog effect over top of it.
+        /// </summary>
+        public bool UseFog;
+
+        public Vector3 FogColor;
+
+        /// <summary>
         /// The graphics device in use by the node.
         /// </summary>
         protected GraphicsDevice GraphicsDevice;
@@ -37,140 +49,84 @@ namespace SolarSystem
         protected Game1 Game;
 
         /// <summary>
-        /// An abstract method to draw the node on screen.
+        /// An virtual empty method to draw the node on screen.
         /// </summary>
         /// <param name="effect">
         /// The effect to draw with. Some objects may ignore this.
         /// </param>
-        public abstract void Draw(BasicEffect effect);
+        public virtual void Draw(BasicEffect effect) {  }
+
+        /// <summary>
+        /// An virtual empty method to check collision of this node against a given
+        /// collision sphere.
+        /// </summary>
+        /// <param name="col">
+        /// The collision sphere to test against.
+        /// </param>
+        /// <returns>
+        /// True if a collision occurred, false if not.
+        /// </returns>
+        public virtual bool Collides(BoundingSphere col) { return false; }
+
+        /// <summary>
+        /// An virtual empty method to update the node.
+        /// </summary>
+        /// <param name="time">
+        /// The current time snapshot to operate with.
+        /// </param>
+        public virtual void Update(GameTime time) {  }
 
         /// <summary>
         /// A constructor accepting the instantiating game.
         /// </summary>
         /// <param name="game">The game that is instantiating this node.</param>
-        public ANode(Microsoft.Xna.Framework.Game game)
+        public ANode(Game1 game)
         {
-            this.Game = (Game1)game;
+            this.Game = game;
             this.GraphicsDevice = game.GraphicsDevice;
 
             this.Scale = new Vector3(1, 1, 1);
+
+            UseFog = true;
+            FogColor = Vector3.Zero;
         }
 
         /// <summary>
-        /// The internally stored position.
+        /// The current position of the node in the game world.
         /// </summary>
-        private Vector3 InternalPosition;
+        public Vector3 Position;
 
         /// <summary>
-        /// A position property with set-get modifiers to properly update the node transformation.
+        /// The node's rotation.
         /// </summary>
-        public Vector3 Position
-        {
-            set
-            {
-                InternalPosition = value;
-                this.UpdateTransformation();
-            }
-            get
-            {
-                return InternalPosition;
-            }
-        }
+        public Vector3 Rotation;
 
         /// <summary>
-        /// The internally stored rotation.
+        /// The node's scale.
         /// </summary>
-        private Vector3 InternalRotation;
+        public Vector3 Scale;
 
         /// <summary>
-        /// A rotation property with set-get modifiers to properly update the node transformation.
+        /// The node's origin. This is essentially an offset by which the node will rotate about.
         /// </summary>
-        public Vector3 Rotation
-        {
-            set
-            {
-                InternalRotation = value;
-                this.UpdateTransformation();
-            }
-            get
-            {
-                return InternalRotation;
-            }
-        }
+        public Vector3 Origin;
 
         /// <summary>
-        /// The internally stored scale.
+        /// The node's relative rotation. If Origin != Vector3.Zero, then this serves as the model-local
+        /// rotation where the regulat rotation causes the node to orbit about Origin.
         /// </summary>
-        private Vector3 InternalScale;
-
-        /// <summary>
-        /// A scale property with set-get modifiers to properly update the node transformation.
-        /// </summary>
-        public Vector3 Scale
-        {
-            set
-            {
-                InternalScale = value;
-                this.UpdateTransformation();
-            }
-            get
-            {
-                return InternalPosition;
-            }
-        }
-
-        /// <summary>
-        /// The internally stored origin.
-        /// </summary>
-        private Vector3 InternalOrigin;
-
-        /// <summary>
-        /// A property with set-get modifiers to update the node transformation.
-        /// </summary>
-        public Vector3 Origin
-        {
-            set
-            {
-                InternalOrigin = value;
-                this.UpdateTransformation();
-            }
-            get
-            {
-                return InternalOrigin;
-            }
-        }
-
-        /// <summary>
-        /// The internally stored relative rotation.
-        /// </summary>
-        private Vector3 InternalRelativeRotation;
-
-        /// <summary>
-        /// A relative rotation property with set-get modifiers to update the node transformation.
-        /// </summary>
-        public Vector3 RelativeRotation
-        {
-            set
-            {
-                InternalRelativeRotation = value;
-                this.UpdateTransformation();
-            }
-            get
-            {
-                return InternalRelativeRotation;
-            }
-        }
+        public Vector3 RelativeRotation;
 
         /// <summary>
         /// Method that is called internally to update the node transformation matrix.
         /// </summary>
-        private void UpdateTransformation()
+        public void UpdateTransformation()
         {
-            Transformation = Matrix.CreateFromYawPitchRoll(this.InternalRelativeRotation.X, this.InternalRelativeRotation.Y, this.InternalRelativeRotation.Z);
-            Transformation *= Matrix.CreateTranslation(this.InternalOrigin);
-            Transformation *= Matrix.CreateFromYawPitchRoll(this.InternalRotation.X, this.InternalRotation.Y, this.InternalRotation.Z);
-            Transformation *= Matrix.CreateScale(this.InternalScale);
-            Transformation *= Matrix.CreateTranslation(this.InternalPosition);
+            Transformation = Matrix.CreateFromYawPitchRoll(RelativeRotation.X, RelativeRotation.Y, RelativeRotation.Z);
+            Transformation *= Matrix.CreateTranslation(Origin);
+            Transformation *= Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z);
+            Transformation *= Matrix.CreateScale(Scale);
+            Transformation *= Matrix.CreateTranslation(Position);
         }
     }
 }

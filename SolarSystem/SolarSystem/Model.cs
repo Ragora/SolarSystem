@@ -29,7 +29,7 @@ namespace SolarSystem
         /// </summary>
         /// <param name="game">The game instantiating this model.</param>
         /// <param name="shapeName">The model file to use as geometry source.</param>
-        public Model(Microsoft.Xna.Framework.Game game, string shapeName) : base(game)
+        public Model(Game1 game, string shapeName) : base(game)
         {
             Rendered = game.Content.Load<Microsoft.Xna.Framework.Graphics.Model>(shapeName);
         }
@@ -63,6 +63,11 @@ namespace SolarSystem
                 {
                     meshEffect.EnableDefaultLighting();
                     meshEffect.Texture = Texture;
+
+                    meshEffect.FogEnabled = UseFog;
+                    meshEffect.FogColor = FogColor;
+                    meshEffect.FogStart = 100;
+                    meshEffect.FogEnd = 200;
 
                     meshEffect.View = Game.Camera.View;
                     meshEffect.Projection = Game.Camera.Projection;

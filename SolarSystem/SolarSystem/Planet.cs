@@ -76,6 +76,8 @@ namespace SolarSystem
 
                 satellite.Update(time);
             }
+
+            UpdateTransformation();
         }
     }
 }

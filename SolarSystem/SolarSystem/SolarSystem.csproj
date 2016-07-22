@@ -72,17 +72,27 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimatedSprite.cs" />
     <Compile Include="ANode.cs" />
     <Compile Include="AsteroidManager.cs" />
+    <Compile Include="Debris.cs" />
+    <Compile Include="FlyingCamera.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="InputManager.cs" />
+    <Compile Include="ITickable.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Planet.cs" />
+    <Compile Include="Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="RandomHelper.cs" />
+    <Compile Include="SoundManager.cs" />
+    <Compile Include="SpriteExplosion.cs" />
     <Compile Include="StaticCamera.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="explosion.png" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
